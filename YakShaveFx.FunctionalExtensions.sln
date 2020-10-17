@@ -11,6 +11,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{5DA09269
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YakShaveFx.FunctionalExtensions.Tests", "tests\YakShaveFx.FunctionalExtensions.Tests\YakShaveFx.FunctionalExtensions.Tests.csproj", "{3E68ADFD-A00E-4D09-A244-4E83B81F49F7}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "_build", "build\_build.csproj", "{0BEBFC66-744F-4991-8898-7BFC393344DC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,8 @@ Global
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0BEBFC66-744F-4991-8898-7BFC393344DC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0BEBFC66-744F-4991-8898-7BFC393344DC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{883A2B93-5FDD-435A-8E97-D0550AFB17FA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{883A2B93-5FDD-435A-8E97-D0550AFB17FA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{883A2B93-5FDD-435A-8E97-D0550AFB17FA}.Debug|x64.ActiveCfg = Debug|Any CPU
