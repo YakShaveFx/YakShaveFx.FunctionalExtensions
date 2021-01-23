@@ -4,5 +4,11 @@
     <LangVersion>8.0</LangVersion>
     <Nullable>enable</Nullable>
     <CodeAnalysisRuleSet>$(MSBuildThisFileDirectory)Rules.ruleset</CodeAnalysisRuleSet>
+  
+    <MinVerMinimumMajorMinor>0.0</MinVerMinimumMajorMinor>
   </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MinVer" Version="2.4.0" PrivateAssets="All" />
+  </ItemGroup>
 </Project>
