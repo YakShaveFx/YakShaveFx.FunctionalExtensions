@@ -13,6 +13,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+      with:
+        fetch-depth: 0 # https://github.com/adamralph/minver#why-is-the-default-version-sometimes-used-in-github-actions-and-travis-ci-when-a-version-tag-exists-in-the-history
     
     - name: Setup .NET Core SDK - latest
       uses: actions/setup-dotnet@v1.7.2
