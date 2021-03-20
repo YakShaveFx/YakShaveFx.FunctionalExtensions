@@ -26,5 +26,5 @@ jobs:
       run: chmod +x ./build.sh
 
     - name: package and publish
-      run: ./build.sh publish 
+      run: ./build.sh publish -FeedzApiKey ${{ secrets.AZURE_CREDENTIALS }}
   
