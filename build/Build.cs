@@ -27,9 +27,9 @@ class Build : NukeBuild
     [Parameter("Configuration to build - Default is 'Debug' (local) or 'Release' (server)")]
     readonly Configuration Configuration = IsLocalBuild ? Configuration.Debug : Configuration.Release;
 
-    [Parameter] readonly string NuGetApiKey;
+    [Parameter(Name = "NUGET_API_KEY")] readonly string NuGetApiKey;
 
-    [Parameter] readonly string FeedzApiKey;
+    [Parameter(Name = "FEEDZ_API_KEY")] readonly string FeedzApiKey;
 
     [Solution] readonly Solution Solution;
     [GitRepository] readonly GitRepository GitRepository;
