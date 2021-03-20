@@ -28,6 +28,10 @@ class Build : NukeBuild
     [Parameter("Configuration to build - Default is 'Debug' (local) or 'Release' (server)")]
     readonly Configuration Configuration = IsLocalBuild ? Configuration.Debug : Configuration.Release;
 
+    [Parameter] readonly string NuGetApiKey;
+
+    [Parameter] readonly string FeedzApiKey;
+
     [Solution] readonly Solution Solution;
     [GitRepository] readonly GitRepository GitRepository;
 
@@ -73,7 +77,7 @@ class Build : NukeBuild
         });
     
     Target Pack => _ => _
-        .DependsOn(Test)
+        .DependsOn(Clean, Compile)
         .Executes(() =>
         {
             DotNetPack(s => s
@@ -85,5 +89,33 @@ class Build : NukeBuild
                 .EnableNoBuild());
         });
     
-    // TODO: push packages (dev and release builds)
+    Target Publish => _ => _
+        .DependsOn(Pack)
+        .Executes(() =>
+        {
+            (string feedUrl, string symbolsFeedUrl, string apiKey) = GetPublishTargetSettings();
+
+            DotNetNuGetPush(s => s
+                .SetTargetPath($"{ArtifactsDirectory}/**/*.nupkg")
+                .SetSource(feedUrl)
+                .SetSymbolSource(symbolsFeedUrl)
+                .SetApiKey(apiKey)
+            );
+        });
+
+    (string feedUrl, string symbolsFeedUrl, string apiKey) GetPublishTargetSettings()
+        => GitRepository.Branch switch
+        {
+            "main" => (
+                "https://api.nuget.org/v3/index.json",
+                "https://api.nuget.org/v3/index.json",
+                NuGetApiKey),
+
+            "develop" => (
+                "https://f.feedz.io/yakshavefx/functionalextensions/nuget/index.json", 
+                "https://f.feedz.io/yakshavefx/functionalextensions/symbols", 
+                FeedzApiKey),
+
+            _ => throw new InvalidOperationException($"Current branch \"{GitRepository.Branch}\" should not be publishing packages!")
+        };
 }
