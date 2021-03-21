@@ -4,11 +4,30 @@
     <LangVersion>8.0</LangVersion>
     <Nullable>enable</Nullable>
     <WarningsAsErrors>nullable</WarningsAsErrors>
-      
+
     <MinVerMinimumMajorMinor>0.0</MinVerMinimumMajorMinor>
+
+    <Authors>João Antunes</Authors>
+    <PackageIcon>yakshavefx-icon.png</PackageIcon>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageTags>maybe;either;unit;functional</PackageTags>
+    <PackageProjectUrl>https://github.com/YakShaveFx/YakShaveFx.FunctionalExtensions</PackageProjectUrl>
+    <PackageReleaseNotes>https://github.com/YakShaveFx/YakShaveFx.FunctionalExtensions/blob/main/CHANGELOG.md</PackageReleaseNotes>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>    
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(GITHUB_ACTIONS)' == 'true'">
+    <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="MinVer" Version="2.5.0" PrivateAssets="All" />
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All"/>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="../../assets/yakshavefx-icon.png" Pack="true" PackagePath="/" />
   </ItemGroup>
 </Project>
