@@ -1,0 +1,67 @@
+name: Continuous Integration
+
+on:
+  workflow_dispatch:
+  push:
+
+env:
+  MAIN_DOTNET_VERSION: '5.0.x'
+  
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        fetch-depth: 0 # https://github.com/adamralph/minver#why-is-the-default-version-sometimes-used-in-github-actions-and-travis-ci-when-a-version-tag-exists-in-the-history
+    
+    - name: Setup .NET SDK - latest
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: ${{ env.MAIN_DOTNET_VERSION }}
+
+    - name: Setup .NET Core SDK - 2.1
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: '2.1.x'
+        
+    - name: set shell script permissions
+      if: ${{ matrix.os != 'windows-latest'}}
+      run: chmod +x ./build.sh
+
+    - name: build and test (Unix)
+      if: ${{ matrix.os != 'windows-latest'}}
+      run: ./build.sh test
+
+    - name: build and test (Windows)
+      if: ${{ matrix.os == 'windows-latest'}}
+      run: .\build.ps1 test
+
+  publish:
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop'
+    needs: build
+    runs-on: ubuntu-latest    
+    env:
+      FeedzApiKey: ${{ secrets.FEEDZ_API_KEY }}
+      NuGetApiKey: ${{ secrets.NUGET_API_KEY }}    
+
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        fetch-depth: 0 # https://github.com/adamralph/minver#why-is-the-default-version-sometimes-used-in-github-actions-and-travis-ci-when-a-version-tag-exists-in-the-history
+
+    - name: Setup .NET SDK - latest
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: ${{ env.MAIN_DOTNET_VERSION }}
+
+    - name: set script permissions
+      run: chmod +x ./build.sh
+
+    - name: package and publish
+      run: ./build.sh publish

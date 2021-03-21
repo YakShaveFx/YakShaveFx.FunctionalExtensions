@@ -22,11 +22,14 @@ class Build : NukeBuild
     ///   - JetBrains Rider            https://nuke.build/rider
     ///   - Microsoft VisualStudio     https://nuke.build/visualstudio
     ///   - Microsoft VSCode           https://nuke.build/vscode
-
-    public static int Main () => Execute<Build>(x => x.Compile);
+    public static int Main() => Execute<Build>(x => x.Compile);
 
     [Parameter("Configuration to build - Default is 'Debug' (local) or 'Release' (server)")]
     readonly Configuration Configuration = IsLocalBuild ? Configuration.Debug : Configuration.Release;
+
+    [Parameter] readonly string NuGetApiKey;
+
+    [Parameter] readonly string FeedzApiKey;
 
     [Solution] readonly Solution Solution;
     [GitRepository] readonly GitRepository GitRepository;
@@ -71,19 +74,54 @@ class Build : NukeBuild
                 .EnableNoRestore()
                 .EnableNoBuild());
         });
-    
+
     Target Pack => _ => _
-        .DependsOn(Test)
+        .DependsOn(Clean, Compile)
         .Executes(() =>
         {
             DotNetPack(s => s
                 .SetProject(Solution)
                 .SetOutputDirectory(ArtifactsDirectory)
                 .SetIncludeSymbols(true)
+                .SetSymbolPackageFormat(DotNetSymbolPackageFormat.snupkg)
                 .SetConfiguration(Configuration)
                 .EnableNoRestore()
                 .EnableNoBuild());
         });
-    
-    // TODO: push packages (dev and release builds)
+
+    Target Publish => _ => _
+        .DependsOn(Pack)
+        .Executes(() =>
+        {
+            switch (GitRepository.Branch?.Replace("refs/heads/", ""))
+            {
+                case "main":
+                    DotNetNuGetPush(s => s
+                        .SetTargetPath($"{ArtifactsDirectory}/**/*.nupkg")
+                        .SetSource("https://api.nuget.org/v3/index.json")
+                        .SetApiKey(NuGetApiKey)
+                    );
+                    break;
+                
+                case "develop":
+                    DotNetNuGetPush(s => s
+                        .SetTargetPath($"{ArtifactsDirectory}/**/*.nupkg")
+                        .SetSource("https://f.feedz.io/yakshavefx/functionalextensions/nuget/index.json")
+                        .SetApiKey(FeedzApiKey)
+                    );
+
+                    // For some reason, not being able to publish package and symbols in one go as documented in https://feedz.io/docs/package-types/symbols
+                    // Doing it in two steps
+
+                    DotNetNuGetPush(s => s
+                        .SetTargetPath($"{ArtifactsDirectory}/**/*.snupkg")
+                        .SetSource("https://f.feedz.io/yakshavefx/functionalextensions/symbols")
+                        .SetApiKey(FeedzApiKey)
+                    );
+                    break;
+                
+                default:
+                    throw new InvalidOperationException($"Current branch \"{GitRepository.Branch}\" should not be publishing packages!");
+            }
+        });
 }
