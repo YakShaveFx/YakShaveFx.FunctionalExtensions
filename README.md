@@ -15,4 +15,4 @@ Feed with develop branch packages available at [Feedz.io](https://f.feedz.io/yak
 
 |main|develop|
 |---|---|
-|![CI](https://github.com/YakShaveFx/YakShaveFx.FunctionalExtensions/workflows/CI/badge.svg?branch=main)|![CI](https://github.com/YakShaveFx/YakShaveFx.FunctionalExtensions/workflows/CI/badge.svg?branch=develop)|
+|![CI](https://github.com/YakShaveFx/YakShaveFx.FunctionalExtensions/workflows/Continuous%20Integration/badge.svg?branch=main)|![CI](https://github.com/YakShaveFx/YakShaveFx.FunctionalExtensions/workflows/Continuous%20Integration/badge.svg?branch=develop)|
