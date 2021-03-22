@@ -3,6 +3,9 @@ name: Pull Request
 on:
   workflow_dispatch:
   pull_request:
+    branches-ignore:
+      - main
+      - develop
 
 env:
   MAIN_DOTNET_VERSION: '5.0.x'
