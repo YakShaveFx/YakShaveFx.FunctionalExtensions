@@ -8,28 +8,61 @@ using System.Diagnostics.CodeAnalysis;
 // ReSharper disable once CheckNamespace - folder used for project organization, not useful for library users
 namespace YakShaveFx.FunctionalExtensions
 {
+    /// <summary>
+    /// Provides factory methods for <see cref="Maybe{T}"/> instances.
+    /// </summary>
     public static class Maybe
     {
+        /// <summary>
+        /// Creates a new instance of <see cref="Maybe{T}"/> with the provided value.
+        /// </summary>
+        /// <param name="value">The value to be wrapped by the <see cref="Maybe{T}"/> instance.</param>
+        /// <typeparam name="T">The type of value to be wrapped by the <see cref="Maybe{T}"/> instance.</typeparam>
+        /// <returns>A new <see cref="Maybe{T}"/> instance with a wrapped value.</returns>
         public static Maybe<T> Some<T>(T value) where T : notnull => new Maybe<T>(value);
 
+        /// <summary>
+        /// Creates a new empty instance of <see cref="Maybe{T}"/>. 
+        /// </summary>
+        /// <typeparam name="T">The type of value that would be wrapped by the <see cref="Maybe{T}"/> instance.</typeparam>
+        /// <returns>A new <see cref="Maybe{T}"/> instance without a wrapped value.</returns>
         public static Maybe<T> None<T>() where T : notnull => new Maybe<T>();
 
+        /// <summary>
+        /// Creates a new instance of <see cref="Maybe{T}"/> with the provided value, if not null. 
+        /// </summary>
+        /// <param name="value">The value to be wrapped by the <see cref="Maybe{T}"/> instance.</param>
+        /// <typeparam name="T">The type of value to be wrapped by the <see cref="Maybe{T}"/> instance.</typeparam>
+        /// <returns>A new <see cref="Maybe{T}"/> instance.</returns>
         public static Maybe<T> FromNullable<T>(T? value) where T : class
             => value is null
                 ? None<T>()
                 : Some(value);
 
+        /// <summary>
+        /// Creates a new instance of <see cref="Maybe{T}"/> with the provided value, if not null. 
+        /// </summary>
+        /// <param name="value">The value to be wrapped by the <see cref="Maybe{T}"/> instance.</param>
+        /// <typeparam name="T">The type of value to be wrapped by the <see cref="Maybe{T}"/> instance.</typeparam>
+        /// <returns>A new <see cref="Maybe{T}"/> instance.</returns>
         public static Maybe<T> FromNullable<T>(T? value) where T : struct
             => value.HasValue
                 ? Some(value.Value)
                 : None<T>();
     }
 
+    /// <summary>
+    /// Explicitly represents the concept of the possible absence of value.
+    /// </summary>
+    /// <typeparam name="T">The type of value that is/would be wrapped by a <see cref="Maybe{T}"/> instance.</typeparam>
     public readonly struct Maybe<T> : IEquatable<Maybe<T>>, IComparable<Maybe<T>>, IComparable
         where T : notnull
     {
         private readonly T _value;
 
+        /// <summary>
+        /// Indicates whether a value is present.
+        /// </summary>
         public bool HasValue { get; }
 
         internal Maybe(T value)
@@ -39,12 +72,22 @@ namespace YakShaveFx.FunctionalExtensions
         }
 
 #if NETSTANDARD2_1
+        /// <summary>
+        /// Gets the wrapped value, if present.
+        /// </summary>
+        /// <param name="value">The wrapped value (if any).</param>
+        /// <returns><code>true</code> if a value is present, <code>false</code> otherwise.</returns>        
         public bool TryGetValue([MaybeNullWhen(false)]out T value)
         {
             value = HasValue ? _value : default;
             return HasValue;
         }
 #else
+        /// <summary>
+        /// Gets the wrapped value, if present.
+        /// </summary>
+        /// <param name="value">The wrapped value (if any).</param>
+        /// <returns><code>true</code> if a value is present, <code>false</code> otherwise.</returns>
         public bool TryGetValue(out T value)
         {
 #pragma warning disable 8601
@@ -83,7 +126,6 @@ namespace YakShaveFx.FunctionalExtensions
                     ? comparableValue.CompareTo(otherValue)
                     : Comparer<T>.Default.Compare(value, otherValue);
         }
-
 
         /// <inheritdoc />
         public int CompareTo(object? obj)
